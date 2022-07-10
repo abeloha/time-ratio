@@ -88,21 +88,21 @@
         <div class='container'>
           <div class='text-center'>
             <h2 class='section-title animated onstart' data-animation='fadeInDown'>
-              <span class="highlight f-bold">Exercise Time</span>
+              <span class="highlight f-bold">Exercise Time: </span> <span id="exDate"></span>
             </h2>
 
             <div id="clock" class="onstart animated">
-                <div class="number">12 : 13 : 15</div>
+                <div class="number" id="exClock"> </div>
             </div>
 
             <hr>
             
             <h3 class='section-title animated onstart' data-animation='fadeInDown'>
-              <span class="f-bold">Real Time</span>
+              <span class="f-bold">Real Time: </span> <span id="realDate"></span>
             </h3>
 
-            <div id="realClock" class="onstart animated">
-                <h1>12 : 13 : 15</h1>
+            <div class="onstart animated">
+                <h1> <span id="realClock"></span> </h1>
             </div>
            
 
@@ -121,7 +121,7 @@
           </h1>
           <div class='row'>
             <div class='col-sm-8 col-sm-offset-2'>
-              <form action='#' class='mg-b'>
+              <form class='mg-b' id="formSet" method="POST">
                 <div class='form-wrap'>
 
                   <div class='col-sm-12'>
@@ -130,13 +130,13 @@
 
                       <div class='col-sm-6'>
                         <div class='form-group'>
-                          <input class='form-control border-bottom' id='contact-form-name' name='name' placeholder='NAME' type='text'>
+                          <input class='form-control border-bottom' type="number" name="real_ratio" id="real_ratio" value="1" min="1" placeholder=''>
                         </div>
                       </div>
 
                       <div class='col-sm-6'>
                         <div class='form-group'>
-                          <input class='form-control border-bottom' id='contact-form-email_contact-form-email' name='email' placeholder='EMAIL' type='text'>
+                          <input class='form-control border-bottom' type="number" name="ex_ratio" id="ex_ratio" value="1" min="1" placeholder=''>
                         </div>
                       </div>
 
@@ -148,13 +148,13 @@
                     <div class='row'>
                     <div class='col-sm-6'>
                       <div class='form-group'>
-                        <input class='form-control border-bottom' id='contact-form-name' name='name' placeholder='NAME' type='text'>
+                        <input class='form-control border-bottom' type="date" value="" name="ex_start_date" id="ex_start_date" placeholder='Start date'required>
                       </div>
                     </div>
 
                     <div class='col-sm-6'>
                       <div class='form-group'>
-                        <input class='form-control border-bottom' id='contact-form-email_contact-form-email' name='email' placeholder='EMAIL' type='text'>
+                        <input class='form-control border-bottom' type="time" value="" name="ex_start_time" id="ex_start_time" placeholder='Start time' required>
                       </div>
                     </div>
 
@@ -174,6 +174,28 @@
         </div>
       </section>
       <!-- End Contacts -->
+
+
+      <!-- Start Footer -->
+    <footer class='page-footer'>
+      <div class='container'>
+        <div class='row'>
+          <div class='col-sm-6 col-sm-push-6'>
+            <div class='social-nav'>
+              <ul>
+                <li> <span id="real_ratio_display"></span> </li>
+                <li> : </li>
+                <li> <span id="ex_ratio_display"></span> </li>
+              </ul>
+            </div>
+          </div>
+          <div class='col-sm-6 col-sm-pull-6'>
+            <div class='copyright'> Exercise Start At: <span id="ex_start_at_display"></span></div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- End Footer -->
       
     </div>
     
@@ -210,5 +232,100 @@
     <!-- Main -->
     <script src="js/main.js"></script>
     <!-- End Scripts -->
+
+    <script type="text/javascript">
+
+      var ex_start_date_time = '';
+      var momentExStart = null;
+      var ratio = 1;
+
+
+      var dateTimeFormat = 'YYYY-MM-DD HH:mm:ss';
+      var dateFormat = 'YYYY-MM-DD';
+      var timeFormat = 'HH:mm:ss';
+
+      var c = 0;
+      setValue();
+      const interval = setInterval(() => {
+          c++;
+          console.log('Runing for ' + c);
+          setDate();
+      }, 1000); //milisec
+
+      $('#formSet').on('submit',function(e){
+          e.preventDefault();
+          setValue();
+          document.getElementById('fullpage').scrollIntoView();
+      });
+
+      function setValue(){
+
+        var now = new Date();
+        var momentNow = moment(now, dateTimeFormat);
+
+        let ex_start_date = $('#ex_start_date').val();
+        let ex_start_time = $('#ex_start_time').val();
+
+        if(ex_start_date == ''){
+          ex_start_date = momentNow.format(dateFormat);
+          $('#ex_start_date').val(ex_start_date);
+        }
+
+        if(ex_start_time == ''){
+          ex_start_time = momentNow.format(timeFormat);
+          $('#ex_start_time').val(momentNow.format('HH:mm'));
+        }
+
+        ex_start_date_time = moment(ex_start_date + ' ' + ex_start_time, dateTimeFormat);
+
+        let real_ratio = $('#real_ratio').val();
+        let ex_ratio = $('#ex_ratio').val();
+
+
+        $('#ex_start_at_display').text(ex_start_date_time);
+        $('#real_ratio_display').text(real_ratio);
+        $('#ex_ratio_display').text(ex_ratio);
+
+        ratio = ex_ratio / real_ratio;
+        momentExStart = moment(ex_start_date_time, dateTimeFormat);
+      }
+
+
+      function setDate(){
+        var exClock = '';
+        var exDate = '';
+
+        var realDate = '';
+        var realClock = '';
+
+        var now = new Date();
+        var momentNow = moment(now, dateTimeFormat);
+
+        realClock = momentNow.format(timeFormat);
+        realDate = momentNow.format(dateFormat);
+
+        var diffSec = moment(momentNow, dateTimeFormat).diff(momentExStart, 'seconds');
+        
+        if(diffSec < 0 || ratio == 1){
+          exClock = realClock;
+          exDate = realDate;
+          console.log('exercise date not started or ration = 1');
+        }else{
+          var exFactorSec = diffSec * ratio;
+          var newExDateTimeMoment = momentNow.add(exFactorSec, 'seconds')
+
+          exClock = newExDateTimeMoment.format(timeFormat);
+          exDate = newExDateTimeMoment.format(dateFormat);
+        }
+        
+
+        $('#exClock').text(exClock);
+        $('#exDate').text(exDate);
+        $('#realDate').text(realDate);
+        $('#realClock').text(realClock);
+      }
+
+    </script>
+
   </body>
 </html>

@@ -196,7 +196,6 @@
       </div>
     </footer>
     <!-- End Footer -->
-      
     </div>
     
     <!-- Start Scripts -->
@@ -236,7 +235,6 @@
     <script type="text/javascript">
 
       var ex_start_date_time = '';
-      var momentExStart = null;
       var ratio = 1;
 
 
@@ -259,7 +257,6 @@
       });
 
       function setValue(){
-
         var now = new Date();
         var momentNow = moment(now, dateTimeFormat);
 
@@ -287,7 +284,7 @@
         $('#ex_ratio_display').text(ex_ratio);
 
         ratio = ex_ratio / real_ratio;
-        momentExStart = moment(ex_start_date_time, dateTimeFormat);
+        
       }
 
 
@@ -304,6 +301,7 @@
         realClock = momentNow.format(timeFormat);
         realDate = momentNow.format(dateFormat);
 
+        momentExStart = moment(ex_start_date_time, dateTimeFormat);
         var diffSec = moment(momentNow, dateTimeFormat).diff(momentExStart, 'seconds');
         
         if(diffSec < 0 || ratio == 1){
@@ -311,8 +309,16 @@
           exDate = realDate;
           console.log('exercise date not started or ration = 1');
         }else{
-          var exFactorSec = diffSec * ratio;
+
+
+          console.log('converting with ratio: ' + ratio);
+
+          var exFactorSec = (diffSec * ratio) - diffSec;
+
           var newExDateTimeMoment = momentNow.add(exFactorSec, 'seconds')
+
+          console.log('diffSec: ' + diffSec);
+          console.log('exFactorSec: ' + exFactorSec);
 
           exClock = newExDateTimeMoment.format(timeFormat);
           exDate = newExDateTimeMoment.format(dateFormat);

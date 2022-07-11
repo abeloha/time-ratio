@@ -237,16 +237,12 @@
       var ex_start_date_time = '';
       var ratio = 1;
 
-
       var dateTimeFormat = 'YYYY-MM-DD HH:mm:ss';
       var dateFormat = 'YYYY-MM-DD';
       var timeFormat = 'HH : mm : ss';
 
-      var c = 0;
       setValue();
       const interval = setInterval(() => {
-          c++;
-          console.log('Runing for ' + c);
           setDate();
       }, 1000); //milisec
 
@@ -310,15 +306,9 @@
           console.log('exercise date not started or ration = 1');
         }else{
 
+          var exFactorSec = diffSec * ratio;
 
-          console.log('converting with ratio: ' + ratio);
-
-          var exFactorSec = (diffSec * ratio) - diffSec;
-
-          var newExDateTimeMoment = momentNow.add(exFactorSec, 'seconds')
-
-          console.log('diffSec: ' + diffSec);
-          console.log('exFactorSec: ' + exFactorSec);
+          var newExDateTimeMoment = momentExStart.add(exFactorSec, 'seconds');
 
           exClock = newExDateTimeMoment.format(timeFormat);
           exDate = newExDateTimeMoment.format(dateFormat);

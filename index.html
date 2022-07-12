@@ -241,7 +241,9 @@
       var dateFormat = 'YYYY-MM-DD';
       var timeFormat = 'HH : mm : ss';
 
+      loadStorageValues();
       setValue();
+
       const interval = setInterval(() => {
           setDate();
       }, 1000); //milisec
@@ -259,20 +261,25 @@
         let ex_start_date = $('#ex_start_date').val();
         let ex_start_time = $('#ex_start_time').val();
 
+        //check storage
         if(ex_start_date == ''){
           ex_start_date = momentNow.format(dateFormat);
           $('#ex_start_date').val(ex_start_date);
         }
+        localStorage.setItem('ex_start_date', ex_start_date);
 
         if(ex_start_time == ''){
-          ex_start_time = momentNow.format(timeFormat);
-          $('#ex_start_time').val(momentNow.format('HH:mm'));
+          ex_start_time = momentNow.format('HH:mm');
+          $('#ex_start_time').val(ex_start_time);
         }
-
+        localStorage.setItem('ex_start_time', ex_start_time);
+        
         ex_start_date_time = moment(ex_start_date + ' ' + ex_start_time, dateTimeFormat);
 
         let real_ratio = $('#real_ratio').val();
         let ex_ratio = $('#ex_ratio').val();
+        localStorage.setItem('real_ratio', real_ratio);
+        localStorage.setItem('ex_ratio', ex_ratio);
 
 
         $('#ex_start_at_display').text(ex_start_date_time);
@@ -321,6 +328,28 @@
         $('#realClock').text(realClock);
       }
 
+      function loadStorageValues(){
+        let real_ratio = localStorage.getItem('real_ratio');
+        if(real_ratio != null){
+          $('#real_ratio').val(real_ratio);
+        }
+
+        let ex_ratio = localStorage.getItem('ex_ratio');
+        if(ex_ratio != null){
+          $('#ex_ratio').val(ex_ratio);
+        }
+
+        let  ex_start_date = localStorage.getItem('ex_start_date');
+        if(ex_start_date != null){
+          $('#ex_start_date').val(ex_start_date);
+        }
+
+        let  ex_start_time = localStorage.getItem('ex_start_time');
+        if(ex_start_time != null){
+          $('#ex_start_time').val(ex_start_time);
+        }
+
+      }
     </script>
 
   </body>
